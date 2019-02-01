@@ -72,7 +72,7 @@
           Ycalc2 = matrix(data = ydata,nrow = row(ydata) ,ncol = col(ydata))
           #Ycalc1 is Ycalc in the previous step
           #ycalc2 is Ycalc 2 steps before
-          Te = matrix(data = 0,nrow = 1000,ncol = 0)
+          Te = vector(mode = "list", length = 10)
           for (t in Te) {
             
             Ycalc = Ycalc1 + learningrate * gradient + momentum * (Ycalc1 - Ycalc2)
