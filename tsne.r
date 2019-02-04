@@ -59,6 +59,8 @@
           q_jcondi = t(q_icondj)
          
           #Computing the gradient
+          
+          #MODIFICAR this part
          inversa = as.matrix((1+ abs(dist(ydata, diag = TRUE)) ^ 2) ^ -1)
          gradient = 4 * colSums( (p_ij - q_ij) * (as.matrix(dist(ydata,diag = TRUE))) * inversa)
           
@@ -86,6 +88,7 @@
           }
           
         
+          return Ycalc
         }
 
 
