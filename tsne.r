@@ -2,16 +2,19 @@
 #ALFONSO ALBACETE ZAPATA
 
 
-
+#Cargar la data = iris[,-5]
+#Sin la columna de las especies
 tsne<- function(data){
-  #Firstly we process the data
-  
+
   x = data
   n = nrow(data)
   p = ncol(data)
+  
   #set initial parameters
   learningrate = 100
+  #Establecemos estos valores iniciales
   momentum  = 0.5
+  #momentum = 0.8
   perplexity = 30
   
   #Set initial configuration of the low dimensional
@@ -60,7 +63,7 @@ tsne<- function(data){
   q_jcondi = t(q_icondj)
   
   #Computing the gradient
-  #Arreglar 
+  #Para hacer la inversa de esta matriz utilizo la funcion solve 
   inversa = as.matrix((1+ (dist(ydata, diag = TRUE)) ^ 2))
   inversa = solve(inversa)
   #ARREGLAR EL GRADIENTE
@@ -86,17 +89,16 @@ tsne<- function(data){
   Ycalc =  ydata
   Ycalc1 = ydata
   Ycalc2 = ydata
-  #Ycalc = matrix(data = ydata,nrow = row(ydata) ,ncol = col(ydata))
-  #Ycalc1 = matrix(data = ydata,nrow = row(ydata) ,ncol = col(ydata))
-  #Ycalc2 = matrix(data = ydata,nrow = row(ydata) ,ncol = col(ydata))
   #Ycalc1 is Ycalc in the previous step
   #ycalc2 is Ycalc 2 steps before
   Te = vector(mode = "list", length = 100)
-  Te = as.matrix(1:100)
-  
+  Te = as.matrix(1:1000)
+   
   for (t in Te) {
     
     Ycalc = Ycalc1 + learningrate * gradient + momentum * (Ycalc1 - Ycalc2)
+    #Ycalc = Ycalc1 + 100 * gradient + 0.8 * (Ycalc1 - Ycalc2)
+    learningrate = learningrate +1;
     Ycalc2 = Ycalc1  
     Ycalc1 = Ycalc
     message("Iteration #",t)
@@ -104,9 +106,11 @@ tsne<- function(data){
   }
   
   Ycalc
+  return(Ycalc)
+  #Como resultado final se está agrupando pero se está agrupando
+  #todo en el mismo sitio, no se separa en grupos.
   
 }
-
 
 
 
