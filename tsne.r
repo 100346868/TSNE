@@ -3,7 +3,7 @@
 
 
 #Cargar la data = iris[,-5]
-#Sin la columna de las especies
+#Sin la columna de las especiess(nombres)
 tsne<- function(data){
 
   x = data
