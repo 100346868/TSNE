@@ -12,7 +12,7 @@ tsne<- function(data){
   
   #set initial parameters
   learningrate = 100
-  #Establecemos estos valores iniciales
+  #Establecemos estos valores iniciales 
   momentum  = 0.5
   #momentum = 0.8
   perplexity = 10
@@ -27,16 +27,12 @@ tsne<- function(data){
   #calculating the conditional probabilities in high dimension:
   
   P = matrix(data = 0, nrow = n, ncol = p)
-  
-  P = as.matrix(exp((-dist(x, diag = TRUE) ^ 2) / (2 * sigma ^ 2)),nrow = n, ncol = p)
+  P = as.matrix(exp((-dist(x, diag = TRUE) ^ 2) / (2 * sigma ^ 2)), nrow = n, ncol = p)
   
   #exceptuating the diagonal
   v = rowSums(P) - 1
-  
   p_icondj = P / v
-  
   p_ij = (p_icondj + t(p_icondj)) / (2 * n)
-  
   p_jcondi = t(p_icondj)
   
   # I have found a trouble computing the perplexity:
@@ -50,23 +46,20 @@ tsne<- function(data){
   #calculating the conditional probabilities in low dimension:
   
   Q = matrix(data = 0, nrow = n, ncol = q)
-  
-  Q = as.matrix(exp((-dist(ydata, diag = TRUE) ^ 2)),nrow = n, ncol = q)
+  Q = as.matrix(exp((-dist(ydata, diag = TRUE) ^ 2)), nrow = n, ncol = q)
   
   #The 1 comes from the diagonal
   v2 = rowSums(Q) - 1
-  
   q_icondj = Q / v2
-  
   q_ij = (q_icondj + t(q_icondj)) / (2 * n)
-  
   q_jcondi = t(q_icondj)
   
   #Computing the gradient
   #Para hacer la inversa de esta matriz utilizo la funcion solve 
-  inversa = as.matrix((1+ (dist(ydata, diag = TRUE)) ^ 2))
+  inversa = as.matrix((1+ (dist(ydata, diag = TRUE)) ^ 2), nrow = n, ncol = q)
   inversa = solve(inversa)
-  #ARREGLAR EL GRADIENTE
+
+  
   gradient = matrix(data = 0, nrow = n, ncol = q)
   # tot = vector(mode = "list", length = n)
   # for(i in tot) {
@@ -74,47 +67,40 @@ tsne<- function(data){
   # }
   #Probar de esta forma
   #apply con 1 es row
-  #aaply con 2 es column
+  #apply con 2 es column
   stiffnesses = 4 * (p_ij - q_ij) * inversa 
-  #El problema está en esta funcion
-  #No actualiza bien el gradiente de manera que no se repelen bien los puntos
+
 
   #Para coger las columnas y filas de ydata: 
   #Mirar documentacion pero como en matlab: ydata[1,]
   #Once we have computed everything:
   
-  #Dejo directamente la del comentario
+
   Y_t =  ydata
   Y_t_1 = ydata
   Y_t_2 = ydata
   
-  #Ycalc1 is Ycalc in the previous step
-  #ycalc2 is Ycalc 2 steps before
-  #Te = vector(mode = "list", length = 100)
   Te = as.matrix(1:1000)
    
   for (t in Te) {
     
-    Q = as.matrix(exp((-dist(Y_t, diag = TRUE) ^ 2)),nrow = n, ncol = q)
+    Q = as.matrix(exp((-dist(Y_t, diag = TRUE) ^ 2)), nrow = n, ncol = q)
     #The 1 comes from the diagonal
     v2 = rowSums(Q) - 1
     q_icondj = Q / v2
     q_ij = (q_icondj + t(q_icondj)) / (2 * n)
-    inversa = as.matrix((1+ (dist(Y_t, diag = TRUE)) ^ 2))
-    inversa1 = solve(inversa)
-    stiffnesses = 4 * (p_ij - q_ij) * inversa1 
     
+    inversa = as.matrix((1+ (dist(Y_t, diag = TRUE)) ^ 2), nrow = n, ncol = q)
+    inversa1 = solve(inversa)
+    
+    stiffnesses = 4 * (p_ij - q_ij) * inversa1 
+
     for (i in 1:n){
-      
       gradient[i,] = apply(sweep(Y_t, 2, -Y_t[i,]) * stiffnesses[,i] ,2,sum)
-      
     }
     
     Y_t = Y_t_1 + learningrate * gradient + momentum * (Y_t_1 - Y_t_2)
 
-    #Y_t = Y_t_1 + 50 * gradient + 0.5 * (Y_t_1 - Y_t_2)
-    
-    
     if(t > 700){
       #learningrate = learningrate - 1
       #Mayor learning rate menor los resultados, menor learning mas grandes
@@ -124,8 +110,8 @@ tsne<- function(data){
     Y_t_1 = Y_t
     message("Iteration #",t)
     
-    if((i%%100)==0){
-      plot(Y_t, pch =15 , col = iris$Species)
+    if((t%%100)==0){
+      plot(Y_t, pch = 15 , col = iris$Species)
     }
     
   }
