@@ -1,7 +1,7 @@
 #Script Tsne
 #ALFONSO ALBACETE ZAPATA
 
-
+data <- iris[,1:2]
 #Cargar la data = iris[,-5]
 #Sin la columna de las especiess(nombres)
 tsne<- function(data){
@@ -15,7 +15,7 @@ tsne<- function(data){
   #Establecemos estos valores iniciales
   momentum  = 0.5
   #momentum = 0.8
-  perplexity = 30
+  perplexity = 10
   
   #Set initial configuration of the low dimensional
   #data
@@ -28,7 +28,7 @@ tsne<- function(data){
   
   P = matrix(data = 0, nrow = n, ncol = p)
   
-  P = as.matrix(exp((-dist(x, diag = TRUE) ^ 2) / (2 * sigma ^ 2)))
+  P = as.matrix(exp((-dist(x, diag = TRUE) ^ 2) / (2 * sigma ^ 2)),nrow = n, ncol = p)
   
   #exceptuating the diagonal
   v = rowSums(P) - 1
@@ -49,9 +49,9 @@ tsne<- function(data){
   
   #calculating the conditional probabilities in low dimension:
   
-  Q = matrix(data = 0, nrow = n, ncol = p)
+  Q = matrix(data = 0, nrow = n, ncol = q)
   
-  Q = as.matrix(exp((-dist(ydata, diag = TRUE) ^ 2)))
+  Q = as.matrix(exp((-dist(ydata, diag = TRUE) ^ 2)),nrow = n, ncol = q)
   
   #The 1 comes from the diagonal
   v2 = rowSums(Q) - 1
@@ -76,44 +76,71 @@ tsne<- function(data){
   #apply con 1 es row
   #aaply con 2 es column
   stiffnesses = 4 * (p_ij - q_ij) * inversa 
-  for (i in 1:n){
-    gradient[i,] = apply(sweep(-ydata, 2, -ydata[i,]) * stiffnesses[,i],2,sum)
-  }
-  
-  
+  #El problema está en esta funcion
+  #No actualiza bien el gradiente de manera que no se repelen bien los puntos
+
   #Para coger las columnas y filas de ydata: 
   #Mirar documentacion pero como en matlab: ydata[1,]
   #Once we have computed everything:
   
   #Dejo directamente la del comentario
-  Ycalc =  ydata
-  Ycalc1 = ydata
-  Ycalc2 = ydata
+  Y_t =  ydata
+  Y_t_1 = ydata
+  Y_t_2 = ydata
+  
   #Ycalc1 is Ycalc in the previous step
   #ycalc2 is Ycalc 2 steps before
-  Te = vector(mode = "list", length = 100)
+  #Te = vector(mode = "list", length = 100)
   Te = as.matrix(1:1000)
    
   for (t in Te) {
     
-    Ycalc = Ycalc1 + learningrate * gradient + momentum * (Ycalc1 - Ycalc2)
-    #Ycalc = Ycalc1 + 100 * gradient + 0.8 * (Ycalc1 - Ycalc2)
-    learningrate = learningrate +1;
-    Ycalc2 = Ycalc1  
-    Ycalc1 = Ycalc
+    Q = as.matrix(exp((-dist(Y_t, diag = TRUE) ^ 2)),nrow = n, ncol = q)
+    #The 1 comes from the diagonal
+    v2 = rowSums(Q) - 1
+    q_icondj = Q / v2
+    q_ij = (q_icondj + t(q_icondj)) / (2 * n)
+    inversa = as.matrix((1+ (dist(Y_t, diag = TRUE)) ^ 2))
+    inversa1 = solve(inversa)
+    stiffnesses = 4 * (p_ij - q_ij) * inversa1 
+    
+    for (i in 1:n){
+      
+      gradient[i,] = apply(sweep(Y_t, 2, -Y_t[i,]) * stiffnesses[,i] ,2,sum)
+      
+    }
+    
+    Y_t = Y_t_1 + learningrate * gradient + momentum * (Y_t_1 - Y_t_2)
+
+    #Y_t = Y_t_1 + 50 * gradient + 0.5 * (Y_t_1 - Y_t_2)
+    
+    
+    if(t > 700){
+      #learningrate = learningrate - 1
+      #Mayor learning rate menor los resultados, menor learning mas grandes
+      momentum = 0.8
+    }
+    Y_t_2 = Y_t_1  
+    Y_t_1 = Y_t
     message("Iteration #",t)
+    
+    if((i%%100)==0){
+      plot(Y_t, pch =15 , col = iris$Species)
+    }
     
   }
   
-  Ycalc
-  return(Ycalc)
-  #Como resultado final se está agrupando pero se está agrupando
-  #todo en el mismo sitio, no se separa en grupos.
+  Y_t
+  return(Y_t)
   
 }
 
 
-
+# Para plotear los resultados
+#data <- iris[,-5]
+# tsne1 <- tsne(data)
+#
+#plot(tsne1, pch = 15, col = iris$Species)
 
 
 
