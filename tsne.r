@@ -1,7 +1,7 @@
 #Script Tsne
 #ALFONSO ALBACETE ZAPATA
 
-data <- iris[,1:2]
+data <- iris[,-5]
 #Cargar la data = iris[,-5]
 #Sin la columna de las especiess(nombres)
 tsne<- function(data){
@@ -100,7 +100,9 @@ tsne<- function(data){
     }
     
     Y_t = Y_t_1 + learningrate * gradient + momentum * (Y_t_1 - Y_t_2)
-
+    if(t==1){
+      plot(Y_t, pch = 15 , col = iris$Species)
+    }
     if(t > 700){
       #learningrate = learningrate - 1
       #Mayor learning rate menor los resultados, menor learning mas grandes
@@ -124,7 +126,7 @@ tsne<- function(data){
 
 # Para plotear los resultados
 #data <- iris[,-5]
-# tsne1 <- tsne(data)
+# prueba <- tsne(data)
 #
 #plot(tsne1, pch = 15, col = iris$Species)
 
