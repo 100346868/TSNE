@@ -5,7 +5,7 @@ data <- iris[,-5]
 #Cargar la data = iris[,-5]
 #Sin la columna de las especiess(nombres)
 tsne<- function(data){
-
+  set.seed(12345)
   x = data
   n = nrow(data)
   p = ncol(data)
