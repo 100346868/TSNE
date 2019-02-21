@@ -2,6 +2,7 @@
 #ALFONSO ALBACETE ZAPATA
 
 data <- iris[,-5]
+#MyData <- read.csv(file="heart.csv", header=TRUE, sep=",")
 #Cargar la data = iris[,-5]
 #Sin la columna de las especiess(nombres)
 tsne<- function(data){
@@ -21,7 +22,9 @@ tsne<- function(data){
   #data
   #number of dimensions we want to reduce to.
   sigma = 1/sqrt(2)
+  #Este valor modifica la dimension a la que queremos reducir
   q = 2
+  
   ydata = matrix(data = rnorm(n = (n * p), mean = 0, sd = sigma), nrow = n, ncol = q)
   
   #calculating the conditional probabilities in high dimension:
@@ -57,7 +60,7 @@ tsne<- function(data){
   #Computing the gradient
   #Para hacer la inversa de esta matriz utilizo la funcion solve 
   inversa = as.matrix((1+ (dist(ydata, diag = TRUE)) ^ 2), nrow = n, ncol = q)
-  inversa = solve(inversa)
+  inversa1 = solve(inversa)
 
   
   gradient = matrix(data = 0, nrow = n, ncol = q)
@@ -68,7 +71,7 @@ tsne<- function(data){
   #Probar de esta forma
   #apply con 1 es row
   #apply con 2 es column
-  stiffnesses = 4 * (p_ij - q_ij) * inversa 
+  stiffnesses = 4 * (p_ij - q_ij) * inversa1 
 
 
   #Para coger las columnas y filas de ydata: 
@@ -91,6 +94,7 @@ tsne<- function(data){
     q_ij = (q_icondj + t(q_icondj)) / (2 * n)
     
     inversa = as.matrix((1+ (dist(Y_t, diag = TRUE)) ^ 2), nrow = n, ncol = q)
+    
     inversa1 = solve(inversa)
     
     stiffnesses = 4 * (p_ij - q_ij) * inversa1 
@@ -101,7 +105,9 @@ tsne<- function(data){
     
     Y_t = Y_t_1 + learningrate * gradient + momentum * (Y_t_1 - Y_t_2)
     if(t==1){
-      plot(Y_t, pch = 15 , col = iris$Species)
+     # plot(Y_t, pch = 15 , col = iris$Species)
+      #plot(Y_t, pch = 15)
+      
     }
     if(t > 700){
       #learningrate = learningrate - 1
@@ -113,7 +119,8 @@ tsne<- function(data){
     message("Iteration #",t)
     
     if((t%%100)==0){
-      plot(Y_t, pch = 15 , col = iris$Species)
+     #plot(Y_t, pch = 15 , col = iris$Species)
+      #plot(Y_t)
     }
     
   }
@@ -124,10 +131,14 @@ tsne<- function(data){
 }
 
 
+
+
+
 # Para plotear los resultados
 #data <- iris[,-5]
 # prueba <- tsne(data)
-#
+#Para hacer pruebas en 3 dimensiones
+#scatterplot3d(tsne1, y=NULL, z=NULL, color = as.numeric(iris$Species))
 #plot(tsne1, pch = 15, col = iris$Species)
 
 
