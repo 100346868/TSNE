@@ -27,8 +27,8 @@ calcP <- function(X, perplex){
     
   optim(par = 0.75, 
           fn = function(s2) {
-            res <- (calc_perplexity(X = X, i = i, sigma2 = s2) - perplex)^2
-            ifelse(is.finite(res), res, 1e6)
+          res <- (calc_perplexity(X = X, i = i, sigma2 = s2) - perplex)^2
+          ifelse(is.finite(res), res, 1e6)
           },
           method = "L-BFGS-B", lower = 0.1)$par
     
@@ -38,7 +38,7 @@ calcP <- function(X, perplex){
   P_i_cond_j= matrix(0,n,n)
   P_i_cond_j <- sapply(1:n, function(i) {
     
-    softmax(-rowSums( t(t(X) - X[i, ])^2) / (2 * sigma2_opt[i]))
+  softmax(-rowSums( t(t(X) - X[i, ])^2) / (2 * sigma2_opt[i]))
     
   })
   
@@ -109,7 +109,6 @@ tsne <- function(X, q = 2, T = 1e3, learning_rate = 100, momentum = 0.5,
     
     # Fill gradient
     for (i in 1:n) {
-      
       gradient[i, ] = 4 * colSums(dif_P_Q[i, ] * t(t(Y_t) - Y_t[i, ]) * Q[i, ])
       
     }
