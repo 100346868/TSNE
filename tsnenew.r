@@ -25,10 +25,10 @@ calcP <- function(X, perplex){
   
   sigma2_opt <- sapply(1:n, function(i) {
     
-  optim(par = 0.75, 
+    optim(par = 0.75, 
           fn = function(s2) {
-          res <- (calc_perplexity(X = X, i = i, sigma2 = s2) - perplex)^2
-          ifelse(is.finite(res), res, 1e6)
+            res <- (calc_perplexity(X = X, i = i, sigma2 = s2) - perplex)^2
+            ifelse(is.finite(res), res, 1e6)
           },
           method = "L-BFGS-B", lower = 0.1)$par
     
@@ -38,7 +38,7 @@ calcP <- function(X, perplex){
   P_i_cond_j= matrix(0,n,n)
   P_i_cond_j <- sapply(1:n, function(i) {
     
-  softmax(-rowSums( t(t(X) - X[i, ])^2) / (2 * sigma2_opt[i]))
+    softmax(-rowSums( t(t(X) - X[i, ])^2) / (2 * sigma2_opt[i]))
     
   })
   
@@ -83,7 +83,7 @@ tsne <- function(X, q = 2, T = 1e3, learning_rate = 100, momentum = 0.5,
   # Initial configuration of the low dimensional data
   set.seed(123456)
   Y_t = mvtnorm::rmvnorm(n = n, mean = rep(0, q), sigma = diag(rep(1e-4, q)))
-  
+  Y_0 =  Y_t
   Y_t_1 = Y_t_2 = Y_t
   
   # Loop
@@ -124,28 +124,17 @@ tsne <- function(X, q = 2, T = 1e3, learning_rate = 100, momentum = 0.5,
     }
     #There is a plot each 200 iterations to show the development of the 
     #algorithm
-    if(t<10){
-    if (t == 1 | ((t %% 2) == 0)) {
-      message("Iteration #", t)
-      plot(Y_t, pch = 16, col = cols)
-    }
     
     
-    }else{
-      if (t == 1 | ((t %% 200) == 0)) {
-        message("Iteration #", t)
-        plot(Y_t, pch = 16, col = cols)
-      }
-      
-      
-    }
-    
-    # 
     
   }
   
-  return(Y_t)
-  
+  p = {}
+  p$Y_0 = Y_0
+  p$Y_t = Y_t
+  p
+  #return(Y_t)
+  ## Devuelve la inicialización
 }
 
 
