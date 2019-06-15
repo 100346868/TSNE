@@ -1,1 +1,1 @@
-# Alfonso Albacete Zapata $t$-SNE
+# Alfonso Albacete Zapata t-SNE
