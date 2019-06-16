@@ -642,8 +642,8 @@ scatterplot3d(RtSNE$Y, pch = 16, color =  rep(viridis::viridis(3), each = 400))
 #######################
 
 credit <- read.csv(("C:/Users/Alfonso/Desktop/creditcard.csv"))
-credit_rtsne <- Rtsne(unique(credit),perplexity = 200)
-plot(credit_rtsne$Y, col = credit$Class)
+credit_rtsne <- Rtsne(unique(credit[,1:30]),perplexity = 200,eta = 1000)
+plot(credit_rtsne$Y, col = credit$Class +3,pch = 16)
 
 
 wine <- read.csv("C:/Users/Alfonso/Desktop/wine.csv")
@@ -690,9 +690,12 @@ plot(prcomp(x)$x,col = heart[,14]+1,pch = 16)
 
 plot(heart_rtsn$Y, col = heart[,14] +1,pch = 16)
 
+
+
+
 lung <- read.csv("C:/Users/Alfonso/Desktop/lung.csv")
 set.seed(123456)
-lung_rtsn <- Rtsne(unique(lung[2:57]),perplexity = 2)
+lung_rtsn <- Rtsne(unique(lung[2:57]),perplexity = 10)
 
 plot(color = lung[,1],pch = 16)
 
@@ -740,13 +743,24 @@ plot(iort$Y,col = io[,35],pch =16)
 
 
 elec <- read.csv(("C:/Users/Alfonso/Desktop/elec.csv"))
-elecrt <- Rtsne(unique(elec[1:11]),perplexity = 10, eta = 1000)
+elecrt <- Rtsne(unique(elec[,1:11]),perplexity = 10, eta = 1000)
 plot(elecrt$Y,col = elec[,12]+1,pch =16)
 
 
 
 hep <- read.csv(("C:/Users/Alfonso/Desktop/hep.csv"))
-heprt <- Rtsne(unique(hep[1:19]),perplexity = 10)
+heprt <- Rtsne(unique(hep[,1:19]),perplexity = 10)
 plot(heprt$Y,col = hep[,20],pch =16)
+
+
+
+
+card <- read.csv(("C:/Users/Alfonso/Desktop/card.csv"))
+cardrt <- Rtsne(unique(card[1:19]),perplexity = 10)
+plot(cardrt$Y,col = card[,20],pch =16)
+
+
+
+
 
 

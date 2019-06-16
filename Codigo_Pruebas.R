@@ -27,11 +27,11 @@ Y_1 = mvtnorm::rmvnorm(n = n, mean = rep(0, q), sigma = diag(rep(1e-4, q)))
 
 par(mfrow=c(1,3))
 test <-  Rtsne(data, perplexity = 35, eta  = 1, Y_init = Y_1)
-plot(test$Y, pch = 16, col = iris$Species)
+plot(test$Y, pch = 16, col = iris$Species, xlab = 'X', ylab = 'y',main =' eta = 1')
 test2 <-  Rtsne(data, perplexity = 35, eta = 10, Y_init = Y_1)
-plot(test2$Y, pch = 16, col = iris$Species)
+plot(test2$Y, pch = 16, col = iris$Species, xlab = 'X', ylab = 'y',main =' eta = 10')
 test3 <-  Rtsne(data, perplexity = 35, eta = 1000, Y_init = Y_1)
-plot(test3$Y, pch = 16, col = iris$Species)
+plot(test3$Y, pch = 16, col = iris$Species,, xlab = 'X', ylab = 'y',main =' eta = 1000')
 
 
 ########################
@@ -44,15 +44,22 @@ set.seed(123456)
 data <- as.matrix(unique(mnist))
 MnistRtsne <- Rtsne(data,dims = 2,perplexity = 100,verbose=TRUE,momentum = 0.5)
 # Evitar color 0
-m1 <- (mnist$label  +2)
-plot(MnistRtsne$Y, pch = 16, col = mnist$label, xlab = 'X', ylab = 'Y'
+m1 <- (mnist$label  +1)
+color <- rainbow(10)
+color1 <- color[m1]
+
+plot(MnistRtsne$Y, pch = 16,cex = 0.25, col = color1, xlab = 'X', ylab = 'Y'
      ,main = 'Rtsne on Mnist')
 
 
 # PCA
+#Takes over 15 mins
+m1 <- (mnist$label  +1)
+color <- rainbow(10)
+color1 <- color[m1]
 
 MnistPCA <- prcomp(data)
-plot(MnistPCA$x, pch =16, col = m1,
+plot(MnistPCA$x, pch =16,cex = 0.25, col = color1,
      ,main = 'PCA on Mnist' )
 
 # Mnist Rtsne Over PCA
@@ -60,13 +67,8 @@ plot(MnistPCA$x, pch =16, col = m1,
 MnistPCARtsne <- Rtsne(MnistPCA$x,,dims = 2,
                        perplexity = 100 ,verbose=TRUE,momentum = 0.5)
 
-plot(MnistPCARtsne$Y, pch = 16, col = mnist$label, xlab = 'X', ylab = 'Y'
+plot(MnistPCARtsne$Y, pch = 16, cex = 0.25, col = color1, xlab = 'X', ylab = 'Y'
      ,main = 'Rtsne on Mnist over PCA')
-
-# MDS
-#x <- cmdscale()
-
-
 
 
 ## IRIS 
@@ -129,7 +131,7 @@ scatterplot3d(RtSNE$Y, pch = 16,color = z[-150,], xlab = 'X', ylab = 'Y',
 # dos gaussianas mismo tamaño separadas
 
 set.seed(123456)
-par(mfrow=c(1,3))
+par(mfrow=c(4,3))
 data <- rbind(mvtnorm::rmvnorm(n = 150, mean = c(-3, -3)), 
               mvtnorm::rmvnorm(n = 150, mean = c(3, 3)))
 
@@ -143,7 +145,7 @@ plot(ourTsne$Y_t,col = rep(viridis::viridis(2), each = 150), pch = 16)
 RtSNE <-  Rtsne(data, perplexity = 40, eta = 200, Y_init = ourTsne$Y_0 )
 plot(RtSNE$Y, pch = 16,col = rep(viridis::viridis(2), each = 150) )
 ## tres gaussianas, la del medio mayor sigma mismo tamaño
-par(mfrow=c(1,3))
+#par(mfrow=c(1,3))
 
 data2 <- rbind(mvtnorm::rmvnorm(n = 150, mean = c(-19, -19)), 
                mvtnorm::rmvnorm(n = 150, mean = c(0, 0),
@@ -161,7 +163,7 @@ plot(RtSNE$Y, pch = 16,col = rep(viridis::viridis(3), each = 150) )
 ## 4 gaussianas diferentes tamaños
 #Gaussianas diferentes tamaños
 set.seed(123546)
-par(mfrow=c(1,3))
+#par(mfrow=c(1,3))
 k = 4
 n = 200
 
@@ -184,7 +186,7 @@ plot(RtSNE$Y, pch = 16,col = sort(s) )
 
 ### 4 gaussianas con diferentes tamaños y variaciones
 set.seed(123546)
-par(mfrow=c(1,3))
+#par(mfrow=c(1,3))
 k = 4
 n = 200
 
@@ -297,7 +299,7 @@ plot(RtSNE$Y, pch = 16,col = sort(s) )
 
 
 
-
+set.seed(123456)
 n= 400
 data4 <- rbind(mvtnorm::rmvnorm(n = n, mean = c(-19, -19,4,20),
                                 sigma = rbind(c(3, 0.2,0.2,0.2), c(0.2, 3,0.2,0.2), 
@@ -315,36 +317,95 @@ pairs(data4, col =  rep(viridis::viridis(3), each = 400))
 
 par(mfrow=c(1,2))
 
-ourTsne <- tsne(data4, perplexity = 100, learning_rate = 200, momentum = 0.5
+ourTsne <- tsne(data4, perplexity = 50, learning_rate = 200, momentum = 0.5
                 , T = 1e3, q = 3)
 
-scatterplot3d(ourTsne$Y_t, pch = 16, color = rep(viridis::viridis(3), each = 400))
+scatterplot3d(ourTsne$Y_t, pch = 16, color = rep(viridis::viridis(3), each = 400),
+              xlab ='x', ylab= 'y',zlab= 'z', main= 'our t-SNE version')
 
-RtSNE <- Rtsne(data4,dims = 3,perplexity = 35, Y_init = ourTsne$Y_0,eta = 200 )
+RtSNE <- Rtsne(data4,dims = 3,perplexity = 50, Y_init = ourTsne$Y_0,eta = 200 )
 
-scatterplot3d(RtSNE$Y, pch = 16, color =  rep(viridis::viridis(3), each = 400))
+scatterplot3d(RtSNE$Y, pch = 16, color =  rep(viridis::viridis(3), each = 400),
+              xlab ='x', ylab= 'y',zlab= 'z', main= 'Rtsne package')
+
+
+##Gaussianas 4d in other situations
+
+
+set.seed(123456)
+n= 400
+k = 4
+
+s <- sample(1:k,n,replace = TRUE, prob = c(0.4,0.2,0.3,0.1))
+
+data5 <- rbind(mvtnorm::rmvnorm(n = length(s[s==1])
+                                
+                                , mean = c(-19, -19,4,20),
+                                sigma = rbind(c(3, 0.2,0.2,0.2), c(0.2, 3,0.2,0.2), 
+                                              c(0.2, 0.2, 3,0.2), c(0.2, 0.2,0.2,3) )                               
+), 
+mvtnorm::rmvnorm(n = length(s[s==2])
+                 , mean = c(0, 0,-20,-15)),
+mvtnorm::rmvnorm(n = length(s[s==3]), mean = c(19,19,20,0),
+                 sigma = rbind(c(3, 0.2,0.2,0.2), c(0.2, 3,0.2,0.2), 
+                               c(0.2, 0.2, 3,0.2), c(0.2, 0.2,0.2,3) )),
+    mvtnorm::rmvnorm( n= length(s[s==4])
+                                  , mean = c(0, 10,-15,13))
+                 
+)
+
+
+pairs(data5, col =  sort(s),pch = 16)
+
+par(mfrow=c(1,2))
+
+ourTsne <- tsne(data5, perplexity = 100, learning_rate = 200, momentum = 0.5
+                , T = 2e3, q = 3)
+
+scatterplot3d(ourTsne$Y_t, pch = 16, color = sort(s),
+              xlab ='x', ylab= 'y',zlab= 'z', main= 'our t-SNE version')
+
+RtSNE <- Rtsne(data5,dims = 3,perplexity = 100, Y_init = ourTsne$Y_0,eta = 200 )
+
+scatterplot3d(RtSNE$Y, pch = 16, color =  sort(s),
+              xlab ='x', ylab= 'y',zlab= 'z', main= 'Rtsne package')
 
 
 
-### REAL APPLICATION
+
+
+
+### REAL APPLICATIONs
 
 # Glass dataset
 set.seed(123456)
 glass <- read.csv("C:/Users/Alfonso/Desktop/glass.csv")
-pr <- Rtsne(unique(glass[1:9]),perplexity = 10,momentum = 0.5, eta =1000)
+pr <- Rtsne(unique(glass),perplexity = 10,momentum = 0.5, eta =1000)
 plot(pr$Y, pch = 16, col = glass$Type, xlab = 'X',ylab = 'Y'
      ,main= 'Rtsne on glass dataset')
+z<- as.matrix(glass$Type)
+
+pr2 <- Rtsne(unique(glass),perplexity = 10,
+             dims = 3,momentum = 0.5, eta =1000)
+
+scatterplot3d(pr2$Y, color =z[-150,], pch = 16 ,  xlab = 'X', ylab = 'Y',
+              zlab = 'Z',main ='Rtsne applied to glass')
 
 
-
-
-
+## Wine dataset
 # http://archive.ics.uci.edu/ml/datasets/Wine
 set.seed(123456)
 wine2 <- read.csv("C:/Users/Alfonso/Desktop/wine2.csv")
-wine2_rtsne <- Rtsne(unique(wine2[2:13]),perplexity = 15 , dims = 2, eta = 700 )
+wine2_rtsne <- Rtsne(unique(wine2[,2:13]),perplexity = 15 , dims = 2, eta = 700 )
 plot(wine2_rtsne$Y, col = wine2[,1],pch = 16,xlab = 'X'
      ,ylab = 'Y',main = 'Rtsne on Wines')
+
+pr2 <- Rtsne(unique(wine2[,2:13]),perplexity = 15,
+             dims = 3,momentum = 0.5, eta =700)
+
+scatterplot3d(pr2$Y, color =wine2[,1], pch = 16 ,  xlab = 'X', ylab = 'Y',
+              zlab = 'Z',main ='Rtsne applied to wine dataset')
+
 
 
 ## Heart disease
@@ -353,6 +414,32 @@ heart1 <- read.csv("C:/Users/Alfonso/Desktop/heart1.csv")
 heart1_rtsne <- Rtsne(heart1[,-1],perplexity =50
                       , dims = 2, eta =1000)
 plot(heart1_rtsne$Y, col = heart1[,1]+1,pch = 16)
+
+
+
+pr2 <- Rtsne(unique(heart1[,-1]),perplexity = 50,
+             dims = 3,momentum = 0.5, eta =1000)
+
+scatterplot3d(pr2$Y, color = heart1[,1]+1, pch = 16 ,  xlab = 'X', ylab = 'Y',
+              zlab = 'Z',main ='Rtsne applied to heart1')
+## heart disease
+#http://archive.ics.uci.edu/ml/datasets/Heart+Disease
+set.seed(123456)
+heart <- read.csv("C:/Users/Alfonso/Desktop/heart.csv")
+heart_rtsn <- Rtsne(unique(heart[1:13]),perplexity = 50
+                    , eta= 1000)
+plot(heart_rtsn$Y, col = heart[,14] +1,pch = 16,
+     xlab = 'X',ylab = 'Y',main = 'Rtsne on heart disease')
+
+pr2 <- Rtsne(unique(heart[,1:13]),perplexity = 50,
+             dims = 3,momentum = 0.5, eta =1000)
+x<- prcomp(heart[,1:13
+                 ])
+plot(x$x,col = heart[,14]+1)
+z <- as.matrix(heart[,14])
+scatterplot3d(pr2$Y, color = z[-150,]+1, pch = 16 ,  xlab = 'X', ylab = 'Y',
+              zlab = 'Z',main ='Rtsne applied to heart disease')
+
 
 
 ## fruits
@@ -373,22 +460,40 @@ test <- Rtsne( unique(t(x)), perplexity = 50,eta = 500, dims =2 )
 plot(test$Y,col = rep(1:3, each = 60),pch =16,main= 'Rtsne on fruits',
      xlab = 'X', ylab = 'Y')
 
+
+test <- Rtsne( unique(t(x)), perplexity = 50,eta = 500, dims =3 )
+scatterplot3d(test$Y,color = rep(1:3, each = 60),pch =16,main= 'Rtsne on fruits',
+     xlab = 'X', ylab = 'Y',zlab = 'z')
+
+
+
 ## Ionospherre radar
 
 set.seed(123456)
 io <- read.csv(("C:/Users/Alfonso/Desktop/io.csv"))
-iort <- Rtsne(unique(io[1:34]),perplexity = 20, eta = 1000)
+iort <- Rtsne(unique(io[,1:34]),perplexity = 20, eta = 1000)
 plot(iort$Y,col = io[,35],pch =16,xlab='x',
 ylab='y',main='Rtsne on Ionosphere dataset')
 
+x<- as.numeric(io[,35])
+x1<- as.matrix(x)
+iort <- Rtsne(unique(io[,1:34]),perplexity = 20, eta = 1000,dims = 3)
+scatterplot3d(iort$Y,color = x1[-350,],pch =16,xlab='x',
+     ylab='y',zlab = 'z',main='Rtsne on Ionosphere dataset')
 
-## Electrocardiogram
+
+## Echocardiogram
 
 set.seed(12346)
 elec <- read.csv(("C:/Users/Alfonso/Desktop/elec.csv"))
-elecrt <- Rtsne(unique(elec[1:11]),perplexity = 10, eta = 1000)
+elecrt <- Rtsne(unique(elec[,1:11]),perplexity = 10, eta = 1000)
 plot(elecrt$Y,col = elec[,12]+1,pch =16, xlab = 'X',
-     ylab = 'Y', main = 'Rtsne applied on electrocardiogram')
+     ylab = 'Y', main = 'Rtsne applied on echocardiogram')
+
+elecrt <- Rtsne(unique(elec[,1:11]),perplexity = 10, eta = 1000,dims = 3)
+scatterplot3d(elecrt$Y,color = elec[,12]+1,pch =16, xlab = 'X',
+     ylab = 'Y', zlab = 'z',main = 'Rtsne applied on echocardiogram')
+
 #1 vivos rojos
 #0 muertos negros
 
